@@ -295,8 +295,11 @@ class KodiJson(object):
         return response
 
     def WakeUp(self, waitTime=0.1):
-        """Send a 'noop' action.  This is most often used to 'wake' the
-        target machine from the screen saver."""
+        """ Send a 'noop' action.  This is most often used to 'wake' the
+        target machine from the screen saver.
+
+        Raises a ConnectionError if the target machine does not respond.
+        """
 
         # if (self.debugLevel >= 1):
         #     print 'DEBUG (KodiJson.WakeUp) waitTime={}'.format(waitTime)
@@ -304,6 +307,10 @@ class KodiJson(object):
         response = self.SendRequest(u'XBMC.GetInfoBooleans', {u'booleans': ['System.ScreenSaverActive']})
         # if (self.debugLevel >= 1):
         #     print 'DEBUG (KodiJson.WakeUp) System.ScreenSaverActive={}'.format(response['System.ScreenSaverActive'])
+
+        if (type(response) is not dict):
+            raise ConnectionError(response)
+
         if (response['System.ScreenSaverActive']):
             response = self.SendRequest(u'Input.ExecuteAction', {u'action': 'noop'})
             self.CheckResponseOK(response)

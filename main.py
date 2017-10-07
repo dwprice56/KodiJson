@@ -6,6 +6,8 @@ import time
 
 sys.path.insert(0, '/home/dave/QtProjects/Helpers')
 
+from PyHelpers import LogTimestamp
+
 from PyQt5 import QtGui, QtCore
 from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QTreeWidgetItem
@@ -43,6 +45,7 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
         self.pushButton_Batch_SelectActive.clicked.connect(self.onButton_Batch_SelectActive)
         self.pushButton_Batch_SelectAll.clicked.connect(self.onButton_Batch_SelectAll)
         self.pushButton_Batch_SelectNone.clicked.connect(self.onButton_Batch_SelectNone)
+        self.pushButton_Log_Clear.clicked.connect(self.onButton_Log_Clear)
         self.pushButton_Movies_List.clicked.connect(self.onButton_Movies_List)
         self.pushButton_Movies_Refresh.clicked.connect(self.onButton_Movies_Refresh)
         self.pushButton_Movies_SelectAll.clicked.connect(self.onButton_Movies_SelectAll)
@@ -193,6 +196,8 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
     def onButton_Batch_Update(self):
         """Update the selected devices from the self.treeWidget_BatchUpdate."""
 
+        self.Log_Add('Start batch update')
+
         with QWaitCursor():
             for index in range(self.treeWidget_BatchUpdate.topLevelItemCount()):
                 itm = self.treeWidget_BatchUpdate.topLevelItem(index)
@@ -201,51 +206,69 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
 
                 if (itm.checkState(1) != Qt.Checked):
                     time.sleep(0.5)
-                    continue
+                    continue            # next machine
 
                 key = int(itm.data(0, Qt.DisplayRole))
                 lm = self.localMachines.LOCAL_MACHINES[key]
                 kj = KodiJson(lm.ipAddress, lm.port, lm.userId, lm.password, lm.description)
 
                 response = kj.ping()
+                self.Log_Add('Batch update ping {} ({}): {}'.format(kj.description, kj.ipAddress, response))
                 if (response != 'pong'):
                     self.SetBatchUpdateStatus(itm, response)
-                    continue
+                    continue            # next machine
 
-                self.SetBatchUpdateStatus(itm, 'Updating...')
+                self.SetBatchUpdateStatus(itm, 'Update in progress...')
+                self.Log_Add('Start batch updte for {} ({})'.format(kj.description, kj.ipAddress))
 
-                kj.WakeUp(10.0)
-                response = kj.GetInfoBooleans('Library.IsScanningVideo')
-                if (type(response) is not dict):
-                    self.SetBatchUpdateStatus(itm, response)
-                    continue
+                try:
+                    kj.WakeUp(10.0)
 
-                if (not response['Library.IsScanningVideo']):
                     response = kj.VideoLibraryScan()
                     if (response != u'OK'):
                         self.SetBatchUpdateStatus(itm, response)
-                        continue
+                        self.Log_Add('Batch update error {} ({}): {}'.format(kj.description, kj.ipAddress, response))
+                        continue        # next machine
 
-                time.sleep(10.0)
-
-                response = kj.GetInfoBooleans('Library.IsScanningVideo')
-                if (type(response) is not dict):
-                    self.SetBatchUpdateStatus(itm, response)
-                    continue
-
-                while (response['Library.IsScanningVideo']):
                     time.sleep(1.0)
 
                     response = kj.GetInfoBooleans('Library.IsScanningVideo')
                     if (type(response) is not dict):
                         self.SetBatchUpdateStatus(itm, response)
-                        break
+                        self.Log_Add('Batch update error {} ({}): {}'.format(kj.description, kj.ipAddress, response))
+                        continue        # next machine
+
+                    while (response['Library.IsScanningVideo']):
+                        time.sleep(1.0)
+
+                        response = kj.GetInfoBooleans('Library.IsScanningVideo')
+                        if (type(response) is not dict):
+                            self.SetBatchUpdateStatus(itm, response)
+                            self.Log_Add('Batch update error {} ({}): {}'.format(kj.description, kj.ipAddress, response))
+                            continue    #next machine
+
+                except ConnectionError as err:
+                    self.SetBatchUpdateStatus(itm, response)
+                    self.Log_Add('Batch update error for {} ({}): {}'.format(self.kodiJson.description, self.kodiJson.ipAddress, str(err)))
 
                 self.SetBatchUpdateStatus(itm, 'Update complete!')
+                self.Log_Add('Batch update stop {} ({})'.format(kj.description, kj.ipAddress))
+
+                # next machine
 
         self.treeWidget_BatchUpdate.setCurrentItem(self.treeWidget_BatchUpdate.topLevelItem(0))
-
+        self.Log_Add('Stop batch update')
         QApplication.instance().beep()
+
+    def onButton_Log_Clear(self):
+        """Clear the log."""
+
+        self.listWidget_Log.clear()
+
+    def Log_Add(self, lineOfText):
+        """ Add a line to the log. """
+
+        self.listWidget_Log.addItem('{} {}'.format(LogTimestamp(), lineOfText))
 
     def onButton_Movies_List(self):
         """Get a list of the movies on the selecte machine and display them."""
@@ -359,9 +382,10 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
         QApplication.instance().beep()
 
         QMessageBox.information(QApplication.instance().mainWindow, 'Response', '"{}"'.format(response))
+        self.Log_Add('Ping {} ({}): {}'.format(self.kodiJson.description, self.kodiJson.ipAddress, response))
 
     def onButton_SelectedDevice_Reboot(self):
-        """Send a ping command to the selected device and display the response."""
+        """Send a reboot command to the selected device."""
 
         response = QMessageBox.question(QApplication.instance().mainWindow, 'Are You Sure?',
             'Are you sure you want to reboot "{}"?'.format(self.comboBox_SelectDevice.currentText()))
@@ -369,10 +393,11 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
             return
 
         with QWaitCursor():
-            response = self.kodiJson.onButton_SelectedDevice_Reboot()
+            response = self.kodiJson.Reboot()
         QApplication.instance().beep()
 
         QMessageBox.information(QApplication.instance().mainWindow, 'Response', '"{}"'.format(response))
+        self.Log_Add('Reboot {} ({}): {}'.format(self.kodiJson.description, self.kodiJson.ipAddress, response))
 
     def onButton_SelectedDevice_Version(self):
         """Get the Kodi version and the JSONRPC version."""
@@ -404,47 +429,71 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
     def onButton_SelectedDevice_VideoClean(self):
         """Send a command to the selected device to clean up the video library (remove missing items)."""
 
-        with QWaitCursor():
-            response = self.kodiJson.VideoLibraryClean()
-        QApplication.instance().beep()
+        self.Log_Add('Start clean for {} ({})'.format(self.kodiJson.description, self.kodiJson.ipAddress))
 
-        if (response == u'OK'):
-            self.statusBar.showMessage('Clean complete.', 15000)
-        else:
-            QMessageBox.information(QApplication.instance().mainWindow, 'Response', '"{}"'.format(response))
+        with QWaitCursor():
+            try:
+                self.kodiJson.WakeUp(10.0)
+                response = self.kodiJson.VideoLibraryClean()
+
+                QApplication.instance().beep()
+                if (response == u'OK'):
+                    self.statusBar.showMessage('Clean complete.', 15000)
+                else:
+                    QMessageBox.information(QApplication.instance().mainWindow, 'Response', '"{}"'.format(response))
+
+            except ConnectionError as err:
+                QMessageBox.information(QApplication.instance().mainWindow, 'Response', '"{}"'.format(str(err)))
+                self.Log_Add('Clean error for {} ({}): {}'.format(self.kodiJson.description, self.kodiJson.ipAddress, str(err)))
+
+        self.Log_Add('Stop clean for {} ({})'.format(self.kodiJson.description, self.kodiJson.ipAddress))
 
     def onButton_SelectedDevice_VideoUpdate(self):
         """Send a command to the selected device to update the video library (look for new items)."""
 
+        self.Log_Add('Start update for {} ({})'.format(self.kodiJson.description, self.kodiJson.ipAddress))
+
         with QWaitCursor():
-            self.kodiJson.WakeUp(10.0)
-            response = self.kodiJson.VideoLibraryScan()
+            try:
+                QApplication.instance().beep()
+                self.kodiJson.WakeUp(10.0)
 
-            QApplication.instance().beep()
+                response = self.kodiJson.VideoLibraryScan()
+                if (response != u'OK'):
+                    QMessageBox.information(QApplication.instance().mainWindow, 'Response', '"{}"'.format(response))
+                    self.Log_Add('Update error for {} ({}): {}'.format(self.kodiJson.description,
+                        self.kodiJson.ipAddress), response)
+                    return
 
-            if (response != u'OK'):
-                QMessageBox.information(QApplication.instance().mainWindow, 'Response', '"{}"'.format(response))
-                return
-
-            self.statusBar.showMessage('Update in progress...')
-            time.sleep(1.0)
-
-            response = self.kodiJson.GetInfoBooleans('Library.IsScanningVideo')
-            if (type(response) is not dict):
-                QMessageBox.information(QApplication.instance().mainWindow, 'Response', '"{}"'.format(response))
-                self.statusBar.showMessage('')
-                return
-
-            while (response['Library.IsScanningVideo']):
+                self.statusBar.showMessage('Update in progress...')
                 time.sleep(1.0)
 
                 response = self.kodiJson.GetInfoBooleans('Library.IsScanningVideo')
                 if (type(response) is not dict):
                     QMessageBox.information(QApplication.instance().mainWindow, 'Response', '"{}"'.format(response))
+                    self.Log_Add('Update error for {} ({}): {}'.format(self.kodiJson.description,
+                        self.kodiJson.ipAddress), response)
                     self.statusBar.showMessage('')
                     return
 
-            self.statusBar.showMessage('Update complete!', 30000)
+                while (response['Library.IsScanningVideo']):
+                    time.sleep(1.0)
+
+                    response = self.kodiJson.GetInfoBooleans('Library.IsScanningVideo')
+                    if (type(response) is not dict):
+                        QMessageBox.information(QApplication.instance().mainWindow, 'Response', '"{}"'.format(response))
+                        self.Log_Add('Update error for {} ({}): {}'.format(self.kodiJson.description,
+                            self.kodiJson.ipAddress), response)
+                        self.statusBar.showMessage('')
+                        return
+
+                self.statusBar.showMessage('Update complete!', 30000)
+
+            except ConnectionError as err:
+                QMessageBox.information(QApplication.instance().mainWindow, 'Response', '"{}"'.format(str(err)))
+                self.Log_Add('Update error for {} ({}): {}'.format(self.kodiJson.description, self.kodiJson.ipAddress, str(err)))
+
+        self.Log_Add('Stop update for {} ({})'.format(self.kodiJson.description, self.kodiJson.ipAddress))
 
     def SetBatchUpdateStatus(self, itm, status):
         """Set the status column for the provided item and repaint treeWidget."""

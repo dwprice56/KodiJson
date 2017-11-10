@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>720</width>
-    <height>480</height>
+    <width>920</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,6 +18,22 @@
     <property name="bottomMargin">
      <number>0</number>
     </property>
+    <item row="0" column="3">
+     <widget class="QPushButton" name="pushButton_SelectedDevice_WakeUp">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="toolTip">
+       <string>Tells Kodi to reboot the selected device.</string>
+      </property>
+      <property name="text">
+       <string>Wake Up</string>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="0">
      <widget class="QLabel" name="label_SelectDevice">
       <property name="sizePolicy">
@@ -75,39 +91,7 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="3">
-     <widget class="QPushButton" name="pushButton_SelectedDevice_Reboot">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="toolTip">
-       <string>Tells Kodi to reboot the selected device.</string>
-      </property>
-      <property name="text">
-       <string>Reboot</string>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="4">
-     <widget class="QPushButton" name="pushButton_SelectedDevice_Version">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="toolTip">
-       <string>Returns the Kodi version and the JSON version for the selected device.</string>
-      </property>
-      <property name="text">
-       <string>Version</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="5">
      <widget class="QPushButton" name="pushButton_SelectedDevice_Ping">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -126,7 +110,7 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0" colspan="6">
+    <item row="1" column="0" colspan="5">
      <widget class="QTabWidget" name="tabWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -135,25 +119,199 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
-      <widget class="QWidget" name="tabVideo">
+      <widget class="QWidget" name="tabSelected">
        <attribute name="title">
-        <string>Video</string>
+        <string>Selected</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
-         <widget class="QGroupBox" name="groupBox_SelectedDevice">
-          <property name="title">
-           <string>Selected Device</string>
+         <widget class="QFrame" name="frame_2">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
           </property>
-          <property name="flat">
-           <bool>false</bool>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
           </property>
-          <property name="checkable">
-           <bool>false</bool>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>5</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>5</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="pushButton_SelectedDevice_Version">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Returns the Kodi version and the JSON version for the selected device.</string>
+             </property>
+             <property name="text">
+              <string>Version</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_SelectedDevice_UpdateStatus">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Determine if an audio scan or a video scan is running.</string>
+             </property>
+             <property name="text">
+              <string>Scan Status</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_6">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="frame_3">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>5</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>5</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="pushButton_SelectedDevice_AudioUpdate">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Update the audio library.  This will import any new music.  It will not update existing items.</string>
+             </property>
+             <property name="text">
+              <string>Audio Update</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_SelectedDevice_AudioClean">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Clean the audio library.  This will remove any deleted or missing items from the library.</string>
+             </property>
+             <property name="text">
+              <string>Audio Clean</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_8">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>689</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="frame_5">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_7">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>5</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>5</number>
+           </property>
            <item>
             <widget class="QPushButton" name="pushButton_SelectedDevice_VideoUpdate">
              <property name="sizePolicy">
@@ -162,11 +320,17 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="toolTip">
               <string>Update the video library.  This will import any new movies, TV shows and episodes.  It will not update existing items.</string>
              </property>
              <property name="text">
-              <string>Update</string>
+              <string>Video Update</string>
              </property>
             </widget>
            </item>
@@ -178,22 +342,87 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="toolTip">
               <string>Clean the video library.  This will remove any deleted or missing items from the library.</string>
              </property>
              <property name="text">
-              <string>Clean</string>
+              <string>Video Clean</string>
              </property>
             </widget>
            </item>
            <item>
-            <spacer name="horizontalSpacer_6">
+            <spacer name="horizontalSpacer_9">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>481</width>
+               <width>689</width>
+               <height>22</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="frame_4">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>5</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>5</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="pushButton_SelectedDevice_Reboot">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Tells Kodi to reboot the selected device.</string>
+             </property>
+             <property name="text">
+              <string>Reboot</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_10">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
                <height>20</height>
               </size>
              </property>
@@ -203,43 +432,84 @@
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="groupBox_BatchUpdate">
-          <property name="title">
-           <string>Batch Update</string>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
-          <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="0" colspan="7">
-            <widget class="QTreeWidget" name="treeWidget_BatchUpdate">
-             <property name="uniformRowHeights">
-              <bool>true</bool>
-             </property>
-             <property name="allColumnsShowFocus">
-              <bool>true</bool>
-             </property>
-             <column>
-              <property name="text">
-               <string>Key</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Device</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Status</string>
-              </property>
-             </column>
-            </widget>
-           </item>
-           <item row="1" column="0">
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>283</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabBatch">
+       <attribute name="title">
+        <string>Batch</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QTreeWidget" name="treeWidget_BatchDevices">
+          <property name="uniformRowHeights">
+           <bool>true</bool>
+          </property>
+          <property name="allColumnsShowFocus">
+           <bool>true</bool>
+          </property>
+          <column>
+           <property name="text">
+            <string>Key</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Device</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Status</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="frame_6">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>5</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
             <widget class="QPushButton" name="pushButton_Batch_SelectAll">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
              </property>
              <property name="toolTip">
               <string>Select (check) all batch update devices.</string>
@@ -249,13 +519,19 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
+           <item>
             <widget class="QPushButton" name="pushButton_Batch_SelectActive">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
              </property>
              <property name="toolTip">
               <string>Select (check) only the batch update devices defined as 'active'.</string>
@@ -265,13 +541,19 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="2">
+           <item>
             <widget class="QPushButton" name="pushButton_Batch_SelectNone">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
              </property>
              <property name="toolTip">
               <string>Un-select (un-check) all batch devices.</string>
@@ -281,20 +563,20 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="3">
+           <item>
             <spacer name="horizontalSpacer_5">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>223</width>
+               <width>501</width>
                <height>20</height>
               </size>
              </property>
             </spacer>
            </item>
-           <item row="1" column="4">
+           <item>
             <widget class="QPushButton" name="pushButton_Batch_ClearStatus">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -302,26 +584,168 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="toolTip">
-              <string>Clear the batch update status column.</string>
+              <string>Clear the status column for all batch devices.</string>
              </property>
              <property name="text">
               <string>Clear Status</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="5">
-            <widget class="QPushButton" name="pushButton_Batch_Update">
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="frame_7">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_9">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>5</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="pushButton_Batch_AudioUpdate">
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="toolTip">
-              <string>Batch update the checked devices.  Each device will be updated in turn,</string>
+              <string>Batch update the audio for the checked devices.  Each device will be updated in turn,</string>
              </property>
              <property name="text">
-              <string>Update</string>
+              <string>Audio Update</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="6">
+           <item>
+            <widget class="QPushButton" name="pushButton_Batch_AudioClean">
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Batch update the audio for the checked devices.  Each device will be updated in turn,</string>
+             </property>
+             <property name="text">
+              <string>Audio Clean</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_11">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>44</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_Batch_VideoUpdate">
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Batch update the video for the checked devices.  Each device will be updated in turn,</string>
+             </property>
+             <property name="text">
+              <string>Video Update</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_Batch_VideoClean">
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Batch update the video for the checked devices.  Each device will be updated in turn,</string>
+             </property>
+             <property name="text">
+              <string>Video Clean</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_12">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>44</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBox_Batch_CleanAfterUpdate">
+             <property name="text">
+              <string>Clean after update</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_13">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>162</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <widget class="QPushButton" name="pushButton_Batch_PingVersion">
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="toolTip">
               <string>Ping the selected devices; then get the kodi &amp; json versions.</string>
              </property>
@@ -366,77 +790,97 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
-           <widget class="QPushButton" name="pushButton_Movies_List">
-            <property name="toolTip">
-             <string>Get a list of movies from the selected device.</string>
-            </property>
-            <property name="text">
-             <string>List</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_Movies_SelectAll">
-            <property name="toolTip">
-             <string>Select (check) all movies in the list.</string>
-            </property>
-            <property name="text">
-             <string>Select All</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_Movies_SelectNone">
-            <property name="toolTip">
-             <string>Un-select (un-check) all movies in the list.</string>
-            </property>
-            <property name="text">
-             <string>Select None</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_Movies_Refresh">
-            <property name="toolTip">
-             <string>Refresh (re-import) all of the checked movies in the list.</string>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="text">
-             <string>Refresh</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QFrame" name="frame_8">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="pushButton_Movies_List">
+             <property name="toolTip">
+              <string>Get a list of movies from the selected device.</string>
+             </property>
+             <property name="text">
+              <string>List</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>262</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_Movies_SelectAll">
+             <property name="toolTip">
+              <string>Select (check) all movies in the list.</string>
+             </property>
+             <property name="text">
+              <string>Select All</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_Movies_SelectNone">
+             <property name="toolTip">
+              <string>Un-select (un-check) all movies in the list.</string>
+             </property>
+             <property name="text">
+              <string>Select None</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>262</width>
+               <height>22</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_Movies_Refresh">
+             <property name="toolTip">
+              <string>Refresh (re-import) all of the checked movies in the list.</string>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="text">
+              <string>Refresh</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -471,90 +915,107 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <property name="sizeConstraint">
-           <enum>QLayout::SetDefaultConstraint</enum>
+         <widget class="QFrame" name="frame_9">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
           </property>
-          <item>
-           <widget class="QPushButton" name="pushButton_TV_List">
-            <property name="toolTip">
-             <string>Get a list of all TV shows, by season and episodes, from the selected device.</string>
-            </property>
-            <property name="text">
-             <string>List</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_TV_SelectAll">
-            <property name="toolTip">
-             <string>Select (check) all of the TV shows in the list.</string>
-            </property>
-            <property name="text">
-             <string>Select All</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_TV_SelectNone">
-            <property name="toolTip">
-             <string>Un-select (un-check) all of the TV sjhows in the list.</string>
-            </property>
-            <property name="text">
-             <string>Select None</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_TV_Refresh">
-            <property name="toolTip">
-             <string>Refresh (re-import) all of the checked TV shows in the list.  This does not refresh the episodes.</string>
-            </property>
-            <property name="layoutDirection">
-             <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="text">
-             <string>Refresh</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_TV_RefreshAll">
-            <property name="toolTip">
-             <string>Refresh (re-import) all of the check TV shows in the list.  This will also refresh the episodes.</string>
-            </property>
-            <property name="text">
-             <string>Refresh All</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="pushButton_TV_List">
+             <property name="toolTip">
+              <string>Get a list of all TV shows, by season and episodes, from the selected device.</string>
+             </property>
+             <property name="text">
+              <string>List</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>219</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_TV_SelectAll">
+             <property name="toolTip">
+              <string>Select (check) all of the TV shows in the list.</string>
+             </property>
+             <property name="text">
+              <string>Select All</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_TV_SelectNone">
+             <property name="toolTip">
+              <string>Un-select (un-check) all of the TV sjhows in the list.</string>
+             </property>
+             <property name="text">
+              <string>Select None</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>219</width>
+               <height>22</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_TV_Refresh">
+             <property name="toolTip">
+              <string>Refresh (re-import) all of the checked TV shows in the list.  This does not refresh the episodes.</string>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="text">
+              <string>Refresh</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_TV_RefreshAll">
+             <property name="toolTip">
+              <string>Refresh (re-import) all of the check TV shows in the list.  This will also refresh the episodes.</string>
+             </property>
+             <property name="text">
+              <string>Refresh All</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -654,7 +1115,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>720</width>
+     <width>920</width>
      <height>22</height>
     </rect>
    </property>
@@ -686,18 +1147,8 @@
   <tabstop>comboBox_SelectDevice</tabstop>
   <tabstop>pushButton_SelectedDevice_Ping</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>pushButton_Movies_List</tabstop>
-  <tabstop>pushButton_SelectedDevice_VideoUpdate</tabstop>
-  <tabstop>pushButton_SelectedDevice_VideoClean</tabstop>
-  <tabstop>pushButton_Movies_Refresh</tabstop>
-  <tabstop>pushButton_Movies_SelectAll</tabstop>
-  <tabstop>pushButton_Movies_SelectNone</tabstop>
   <tabstop>treeWidget_TVShows</tabstop>
   <tabstop>treeWidget_Movies</tabstop>
-  <tabstop>pushButton_TV_List</tabstop>
-  <tabstop>pushButton_TV_SelectAll</tabstop>
-  <tabstop>pushButton_TV_SelectNone</tabstop>
-  <tabstop>pushButton_TV_Refresh</tabstop>
  </tabstops>
  <resources/>
  <connections/>

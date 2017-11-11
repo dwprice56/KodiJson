@@ -7,7 +7,7 @@ import time
 
 sys.path.insert(0, '/home/dave/QtProjects/Helpers')
 
-from PyHelpers import LogTimestamp, TimedeltaToString
+from PyHelpers import LogTimestamp, TimedeltaToString, ElapsedTime
 
 from PyQt5 import QtGui, QtCore
 from PyQt5.Qt import Qt
@@ -33,6 +33,8 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
 
+        self.oneMinute = datetime.timedelta(minutes=1)
+
         self.actionQuit.triggered.connect(QApplication.instance().quit)
 
         self.localMachines = LocalMachines()
@@ -42,13 +44,16 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
         self.NewMachine(0)
 
         self.comboBox_SelectDevice.currentIndexChanged.connect(self.NewMachine)
+        self.pushButton_Batch_AudioClean.clicked.connect(self.onButton_Batch_AudioClean)
         self.pushButton_Batch_AudioUpdate.clicked.connect(self.onButton_Batch_AudioUpdate)
-        self.pushButton_Batch_VideoUpdate.clicked.connect(self.onButton_Batch_VideoUpdate)
         self.pushButton_Batch_ClearStatus.clicked.connect(self.onButton_Batch_ClearStatus)
         self.pushButton_Batch_PingVersion.clicked.connect(self.onButton_Batch_PingVersion)
+        self.pushButton_Batch_ScanStatus.clicked.connect(self.onButton_Batch_ScanStatus)
         self.pushButton_Batch_SelectActive.clicked.connect(self.onButton_Batch_SelectActive)
         self.pushButton_Batch_SelectAll.clicked.connect(self.onButton_Batch_SelectAll)
         self.pushButton_Batch_SelectNone.clicked.connect(self.onButton_Batch_SelectNone)
+        self.pushButton_Batch_VideoClean.clicked.connect(self.onButton_Batch_VideoClean)
+        self.pushButton_Batch_VideoUpdate.clicked.connect(self.onButton_Batch_VideoUpdate)
         self.pushButton_Log_Clear.clicked.connect(self.onButton_Log_Clear)
         self.pushButton_Movies_List.clicked.connect(self.onButton_Movies_List)
         self.pushButton_Movies_Refresh.clicked.connect(self.onButton_Movies_Refresh)
@@ -58,6 +63,7 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
         self.pushButton_SelectedDevice_AudioUpdate.clicked.connect(self.onButton_SelectedDevice_AudioUpdate)
         self.pushButton_SelectedDevice_Ping.clicked.connect(self.onButton_SelectedDevice_Ping)
         self.pushButton_SelectedDevice_Reboot.clicked.connect(self.onButton_SelectedDevice_Reboot)
+        self.pushButton_SelectedDevice_ScanStatus.clicked.connect(self.onButton_SelectedDevice_ScanStatus)
         self.pushButton_SelectedDevice_Version.clicked.connect(self.onButton_SelectedDevice_Version)
         self.pushButton_SelectedDevice_VideoClean.clicked.connect(self.onButton_SelectedDevice_VideoClean)
         self.pushButton_SelectedDevice_VideoUpdate.clicked.connect(self.onButton_SelectedDevice_VideoUpdate)
@@ -132,21 +138,23 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
         """ Wait for a music scan to start.
         """
         try:
-            oneMinute = datetime.timedelta(minutes=1)
-            startTime = datetime.datetime.now()
+            elapsedTime = ElapsedTime(self.oneMinute)
 
             self.Log_Add('{} Music scan: Wait for start: Start'.format(self.batchDevice(kj)))
 
             while (not self.IsScanningMusic(kj)):
                 time.sleep(1.0)
 
-                elapsedTime = datetime.datetime.now() - startTime
                 self.BatchDevice_SetStatus(itm,
                     '{}: Waiting for music scan to start: Elapsed time {}...'.format(
-                    kj.address, TimedeltaToString(elapsedTime)))
+                    kj.address, str(elapsedTime)))
 
-                if (elapsedTime >= oneMinute):
+                if (elapsedTime.expired):
                     raise RuntimeError('Music scan: Wait for start: Timed out.')
+
+            self.BatchDevice_SetStatus(itm,
+                '{}: Music scan started: Elapsed time {}'.format(
+                kj.address, str(elapsedTime)))
 
             self.Log_Add('{} Music scan: Wait for start: Stop'.format(self.batchDevice(kj)))
 
@@ -159,21 +167,23 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
         """ Wait for a music scan to complete.
         """
         try:
-            oneHour = datetime.timedelta(hours=1)
-            startTime = datetime.datetime.now()
+            elapsedTime = ElapsedTime()
 
             self.Log_Add('{} Music scan: Wait for stop: Start'.format(self.batchDevice(kj)))
 
             while (self.IsScanningMusic(kj)):
                 time.sleep(1.0)
 
-                elapsedTime = datetime.datetime.now() - startTime
                 self.BatchDevice_SetStatus(itm,
                     '{}: Music scan in progress: Elapsed time {}...'.format(
-                    kj.address, TimedeltaToString(elapsedTime)))
+                    kj.address, str(elapsedTime)))
 
-                if (elapsedTime >= oneHour):
+                if (elapsedTime.expired):
                     raise RuntimeError('Music scan: Wait for stop: Timed out.')
+
+            self.BatchDevice_SetStatus(itm,
+                '{}: Music scan complete: Elapsed time {}'.format(
+                kj.address, str(elapsedTime)))
 
             self.Log_Add('{} Music scan: Wait for stop: Stop'.format(self.batchDevice(kj)))
 
@@ -186,21 +196,23 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
         """ Wait for a video scan to start.
         """
         try:
-            oneMinute = datetime.timedelta(minutes=1)
-            startTime = datetime.datetime.now()
+            elapsedTime = ElapsedTime(self.oneMinute)
 
             self.Log_Add('{} Video scan: Wait for start: Start'.format(self.batchDevice(kj)))
 
             while (not self.IsScanningVideo(kj)):
                 time.sleep(1.0)
 
-                elapsedTime = datetime.datetime.now() - startTime
                 self.BatchDevice_SetStatus(itm,
                     '{}: Waiting for video scan to start: Elapsed time {}...'.format(
-                    kj.address, TimedeltaToString(elapsedTime)))
+                    kj.address, str(elapsedTime)))
 
-                if (elapsedTime >= oneMinute):
+                if (elapsedTime.expired):
                     raise RuntimeError('Video scan: Wait for start: Timed out.')
+
+            self.BatchDevice_SetStatus(itm,
+                '{}: Video scan started: Elapsed time {}'.format(
+                kj.address, str(elapsedTime)))
 
             self.Log_Add('{} Video scan: Wait for start: Stop'.format(self.batchDevice(kj)))
 
@@ -213,21 +225,23 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
         """ Wait for a video scan to complete.
         """
         try:
-            oneHour = datetime.timedelta(hours=1)
-            startTime = datetime.datetime.now()
+            elapsedTime = ElapsedTime()
 
             self.Log_Add('{} Video scan: Wait for stop: Start'.format(self.batchDevice(kj)))
 
             while (self.IsScanningVideo(kj)):
                 time.sleep(1.0)
 
-                elapsedTime = datetime.datetime.now() - startTime
                 self.BatchDevice_SetStatus(itm,
                     '{}: Video scan in progress: Elapsed time {}...'.format(
-                    kj.address, TimedeltaToString(elapsedTime)))
+                    kj.address, str(elapsedTime)))
 
-                if (elapsedTime >= oneHour):
+                if (elapsedTime.expired):
                     raise RuntimeError('Video scan: Wait for stop: Timed out.')
+
+            self.BatchDevice_SetStatus(itm,
+                '{}: Video scan complete: Elapsed time {}'.format(
+                kj.address, str(elapsedTime)))
 
             self.Log_Add('{} Video scan: Wait for stop: Stop'.format(self.batchDevice(kj)))
 
@@ -369,8 +383,56 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
 
         return False
 
+    def onButton_Batch_AudioClean(self):
+        """ In sequence, send a command to each batch device to clean the
+            audio library (remove deleted items).  Wait for each device to
+            complete (or time out) before starting the next device.
+        """
+        if self.BatchDevices_TreeIsEmpty():
+            return
+
+        self.Log_Add('Batch audio clean: Start')
+        self.BatchDevices_ClearStatus()
+
+        with QWaitCursor():
+            for index in range(self.treeWidget_BatchDevices.topLevelItemCount()):
+                itm = self.BatchUpdate_GetCheckedItem(index)
+                if (itm is None):
+                    continue
+                lm, kj = self.BatchUpdate_GetKodiJson(itm)
+
+                try:
+                    if (not self.BatchDevice_Ping(itm, kj)):
+                        continue
+
+                    kj.WakeUp(10.0)
+
+                    if (self.IsScanningVideo(kj)):
+                        self.BatchDevice_WaitForVideoScan_Stop(itm, kj)
+
+                    if (self.IsScanningMusic(kj)):
+                        self.BatchDevice_WaitForMusicScan_Stop(itm, kj)
+
+                    self.BatchDevice_SetStatus(itm,
+                        '{}: Music clean started...'.format(kj.address))
+                    self.Log_Add('{} Music clean: Start'.format(self.batchDevice(kj)))
+                    kj.AudioLibrary_Clean()
+                    self.Log_Add('{} Music clean: Stop'.format(self.batchDevice(kj)))
+                    self.BatchDevice_AppendStatus(itm, 'Clean complete!')
+
+                except KodiJsonResponseError as err:
+                    self.BatchDevice_ResponseError(itm, kj, 'Audio update', err)
+                except (ConnectionResetError, RuntimeError) as err:
+                    self.BatchDevice_ResponseError(itm, kj, 'Audio update', err)
+
+        self.treeWidget_BatchDevices.setCurrentItem(self.treeWidget_BatchDevices.topLevelItem(0))
+        self.Log_Add('Batch audio clean: Stop')
+        QApplication.instance().beep()
+
     def onButton_Batch_AudioUpdate(self):
-        """ Update the selected devices from self.treeWidget_BatchDevices.
+        """ In sequence, send a command to each batch device to update the
+            audio library (look for new items).  Wait for each device to
+            complete (or time out) before starting the next device.
         """
         if self.BatchDevices_TreeIsEmpty():
             return
@@ -401,7 +463,14 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
                         self.BatchDevice_WaitForMusicScan_Start(itm, kj)
                         self.BatchDevice_WaitForMusicScan_Stop(itm, kj)
 
-                    self.BatchDevice_AppendStatus(itm, 'Scan complete!')
+                    # self.BatchDevice_AppendStatus(itm, 'Scan complete!')
+
+                    if (self.checkBox_Batch_CleanAfterUpdate.isChecked()):
+                        self.BatchDevice_AppendStatus(itm, '; Clean started...')
+                        self.Log_Add('{} Audio clean: Start'.format(self.batchDevice(kj)))
+                        kj.AudioLibrary_Clean()
+                        self.Log_Add('{} Audio clean: Stop'.format(self.batchDevice(kj)))
+                        self.BatchDevice_AppendStatus(itm, 'Clean complete!')
 
                 except KodiJsonResponseError as err:
                     self.BatchDevice_ResponseError(itm, kj, 'Audio update', err)
@@ -422,7 +491,8 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
         QApplication.instance().beep()
 
     def onButton_Batch_PingVersion(self):
-        """ Update the selected devices from the self.treeWidget_BatchDevices.
+        """ Ping each batch device and retrieve it's Kodi version and it's
+            Koci JSON version.
         """
         if self.BatchDevices_TreeIsEmpty():
             return
@@ -458,6 +528,44 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
             self.treeWidget_BatchDevices.setCurrentItem(self.treeWidget_BatchDevices.topLevelItem(0))
 
         self.Log_Add('Batch ping & version: Stop')
+        QApplication.instance().beep()
+
+    def onButton_Batch_ScanStatus(self):
+        """ Determine if a music library scan or a video library scan is
+            running for each batch device.
+        """
+        if self.BatchDevices_TreeIsEmpty():
+            return
+
+        self.Log_Add('Batch scan status: Start')
+        self.BatchDevices_ClearStatus()
+
+        with QWaitCursor():
+            for index in range(self.treeWidget_BatchDevices.topLevelItemCount()):
+                itm = self.BatchUpdate_GetCheckedItem(index)
+                if (itm is None):
+                    continue
+                lm, kj = self.BatchUpdate_GetKodiJson(itm)
+
+                try:
+                    musicScan = self.IsScanningMusic(kj)
+                    videoScan = self.IsScanningVideo(kj)
+
+                except KodiJsonResponseError as err:
+                    self.BatchDevice_ResponseError(itm, kj, 'Batch scan status', err)
+                    continue
+                except (ConnectionResetError, RuntimeError) as err:
+                    self.BatchDevice_ResponseError(itm, kj, 'Batch scan status', err)
+                    continue
+
+                s = 'Scan Status: Music scan: {}; Video scan: {}'.format(
+                    musicScan, videoScan)
+                self.BatchDevice_SetStatus(itm, '{}: {}'.format(kj.address, s))
+                self.Log_Add('Batch device: {}: {}'.format(kj.device, s))
+
+            self.treeWidget_BatchDevices.setCurrentItem(self.treeWidget_BatchDevices.topLevelItem(0))
+
+        self.Log_Add('Batch scan status: Stop')
         QApplication.instance().beep()
 
     def onButton_Batch_SelectActive(self):
@@ -511,8 +619,56 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
         self.treeWidget_BatchDevices.scrollToItem(self.treeWidget_BatchDevices.topLevelItem(0))
         QApplication.instance().beep()
 
+    def onButton_Batch_VideoClean(self):
+        """ In sequence, send a command to each batch device to clean the
+            video library (remove deleted items).  Wait for each device to
+            complete (or time out) before starting the next device.
+        """
+        if self.BatchDevices_TreeIsEmpty():
+            return
+
+        self.Log_Add('Batch video clean: Start')
+        self.BatchDevices_ClearStatus()
+
+        with QWaitCursor():
+            for index in range(self.treeWidget_BatchDevices.topLevelItemCount()):
+                itm = self.BatchUpdate_GetCheckedItem(index)
+                if (itm is None):
+                    continue
+                lm, kj = self.BatchUpdate_GetKodiJson(itm)
+
+                try:
+                    if (not self.BatchDevice_Ping(itm, kj)):
+                        continue
+
+                    kj.WakeUp(10.0)
+
+                    if (self.IsScanningVideo(kj)):
+                        self.BatchDevice_WaitForVideoScan_Stop(itm, kj)
+
+                    if (self.IsScanningMusic(kj)):
+                        self.BatchDevice_WaitForMusicScan_Stop(itm, kj)
+
+                    self.BatchDevice_SetStatus(itm,
+                        '{}: Video clean started...'.format(kj.address))
+                    self.Log_Add('{} Video clean: Start'.format(self.batchDevice(kj)))
+                    kj.VideoLibrary_Clean()
+                    self.Log_Add('{} Video clean: Stop'.format(self.batchDevice(kj)))
+                    self.BatchDevice_AppendStatus(itm, 'Clean complete!')
+
+                except KodiJsonResponseError as err:
+                    self.BatchDevice_ResponseError(itm, kj, 'Video update', err)
+                except (ConnectionResetError, RuntimeError) as err:
+                    self.BatchDevice_ResponseError(itm, kj, 'Video update', err)
+
+        self.treeWidget_BatchDevices.setCurrentItem(self.treeWidget_BatchDevices.topLevelItem(0))
+        self.Log_Add('Batch video clean: Stop')
+        QApplication.instance().beep()
+
     def onButton_Batch_VideoUpdate(self):
-        """ Update the selected devices from self.treeWidget_BatchDevices.
+        """ In sequence, send a command to each batch device to update the
+            video library (look for new items).  Wait for each device to
+            complete (or time out) before starting the next device.
         """
         if self.BatchDevices_TreeIsEmpty():
             return
@@ -543,7 +699,14 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
                         self.BatchDevice_WaitForVideoScan_Start(itm, kj)
                         self.BatchDevice_WaitForVideoScan_Stop(itm, kj)
 
-                    self.BatchDevice_AppendStatus(itm, 'Scan complete!')
+                    # self.BatchDevice_AppendStatus(itm, 'Scan complete!')
+
+                    if (self.checkBox_Batch_CleanAfterUpdate.isChecked()):
+                        self.BatchDevice_AppendStatus(itm, '; Clean started...')
+                        self.Log_Add('{} Video clean: Start'.format(self.batchDevice(kj)))
+                        kj.VideoLibrary_Clean()
+                        self.Log_Add('{} Video clean: Stop'.format(self.batchDevice(kj)))
+                        self.BatchDevice_AppendStatus(itm, 'Clean complete!')
 
                 except KodiJsonResponseError as err:
                     self.BatchDevice_ResponseError(itm, kj, 'Video update', err)
@@ -743,6 +906,25 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
 
         except KodiJsonResponseError as err:
             self.SelectedDevice_ResponseError('Reboot', err)
+
+    def onButton_SelectedDevice_ScanStatus(self):
+        """ Determine the audio library and video library scan status of the
+            selected device.
+        """
+        try:
+            with QWaitCursor():
+                musicScan = self.IsScanningMusic(self.kodiJson)
+                videoScan = self.IsScanningVideo(self.kodiJson)
+
+            QApplication.instance().beep()
+            QMessageBox.information(QApplication.instance().mainWindow,
+                'Scan Status', 'Music scan: {}\nVideo scan: {}'.format(
+                musicScan, videoScan))
+            self.Log_Add('{} Scan status: Music scan: {}; Video scan: {}'.format(
+                self.selectedDevice(), musicScan, videoScan))
+
+        except KodiJsonResponseError as err:
+            self.SelectedDevice_ResponseError('Scan status', err)
 
     def onButton_SelectedDevice_Version(self):
         """ Get the Kodi version and the JSONRPC version.
@@ -998,19 +1180,18 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
         """ Wait for an audio update to start.
         """
         try:
-            oneMinute = datetime.timedelta(minutes=1)
-            startTime = datetime.datetime.now()
+            elapsedTime = ElapsedTime(self.oneMinute)
 
             self.Log_Add('{} Music scan: Wait for start: Start'.format(self.selectedDevice()))
 
             while (not self.IsScanningMusic(self.kodiJson)):
                 time.sleep(1.0)
 
-                elapsedTime = datetime.datetime.now() - startTime
-                self.statusBar.showMessage('Audio scan in progress: Elapsed time {}...'.format(
-                    TimedeltaToString(elapsedTime)), 15000)
+                self.statusBar.showMessage(
+                    'Audio scan in progress: Elapsed time {}...'.format(
+                    str(elapsedTime)), 15000)
 
-                if (elapsedTime >= oneMinute):
+                if (elapsedTime.expired):
                     raise RuntimeError('Music scan: Wait for start: Timed out.')
 
             self.Log_Add('{} Music scan: Wait for start: Stop'.format(self.selectedDevice()))
@@ -1024,20 +1205,18 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
         """ Wait for an audio update to complete.
         """
         try:
-            oneHour = datetime.timedelta(hours=1)
-            # oneHour = datetime.timedelta(seconds=15)
-            startTime = datetime.datetime.now()
+            elapsedTime = ElapsedTime()
+            # elapsedTime = ElapsedTime(datetime.timedelta(seconds=15))
 
             self.Log_Add('{} Music scan: Wait for stop: Start'.format(self.selectedDevice()))
 
             while (self.IsScanningMusic(self.kodiJson)):
                 time.sleep(1.0)
 
-                elapsedTime = datetime.datetime.now() - startTime
                 self.statusBar.showMessage('Audio scan in progress: Elapsed time {}...'.format(
-                    TimedeltaToString(elapsedTime)), 15000)
+                    str(elapsedTime)), 15000)
 
-                if (elapsedTime >= oneHour):
+                if (elapsedTime.expired):
                     raise RuntimeError('Music scan: Wait for stop: Timed out.')
 
             self.Log_Add('{} Music scan: Wait for stop: Stop'.format(self.selectedDevice()))
@@ -1051,19 +1230,17 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
         """ Wait for a video scan to start.
         """
         try:
-            oneMinute = datetime.timedelta(minutes=1)
-            startTime = datetime.datetime.now()
+            elapsedTime = ElapsedTime(self.oneMinute)
 
             self.Log_Add('{} Video scan: Wait for start: Start'.format(self.selectedDevice()))
 
             while (not self.IsScanningVideo(self.kodiJson)):
                 time.sleep(1.0)
 
-                elapsedTime = datetime.datetime.now() - startTime
                 self.statusBar.showMessage('Waiting for video scan start: Elapsed time {}...'.format(
-                    TimedeltaToString(elapsedTime)), 15000)
+                    str(elapsedTime)), 15000)
 
-                if (elapsedTime >= oneMinute):
+                if (elapsedTime.expired):
                     raise RuntimeError('Video scan: Wait for start: Timed out.')
 
             self.Log_Add('{} Video scan: Wait for start: Stop'.format(self.selectedDevice()))
@@ -1077,19 +1254,17 @@ class MyMainWindow(QMainWindow, mainwindowui.Ui_MainWindow):
         """ Wait for a video scan to complete.
         """
         try:
-            oneHour = datetime.timedelta(hours=1)
-            startTime = datetime.datetime.now()
+            elapsedTime = ElapsedTime()
 
             self.Log_Add('{} Video scan: Wait for stop: Start'.format(self.selectedDevice()))
 
             while (self.IsScanningVideo(self.kodiJson)):
                 time.sleep(1.0)
 
-                elapsedTime = datetime.datetime.now() - startTime
                 self.statusBar.showMessage('Video scan in progress: Elapsed time {}...'.format(
-                    TimedeltaToString(elapsedTime)), 15000)
+                    str(elapsedTime)), 15000)
 
-                if (elapsedTime >= oneHour):
+                if (elapsedTime.expired):
                     raise RuntimeError('Video scan: Wait for stop: Timed out.')
 
             self.Log_Add('{} Video scan: Wait for stop: Stop'.format(self.selectedDevice()))

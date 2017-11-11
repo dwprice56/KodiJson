@@ -170,7 +170,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_SelectedDevice_UpdateStatus">
+            <widget class="QPushButton" name="pushButton_SelectedDevice_ScanStatus">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -495,7 +495,7 @@
             <number>0</number>
            </property>
            <property name="bottomMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <item>
             <widget class="QPushButton" name="pushButton_Batch_SelectAll">
@@ -571,6 +571,54 @@
              <property name="sizeHint" stdset="0">
               <size>
                <width>501</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_Batch_ScanStatus">
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Ping the selected devices; then get the kodi &amp; json versions.</string>
+             </property>
+             <property name="text">
+              <string>Scan Status</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_Batch_PingVersion">
+             <property name="minimumSize">
+              <size>
+               <width>88</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Ping the selected devices; then get the kodi &amp; json versions.</string>
+             </property>
+             <property name="text">
+              <string>Ping &amp;&amp; Version</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_14">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>44</width>
                <height>20</height>
               </size>
              </property>
@@ -737,22 +785,6 @@
               </size>
              </property>
             </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_Batch_PingVersion">
-             <property name="minimumSize">
-              <size>
-               <width>88</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>Ping the selected devices; then get the kodi &amp; json versions.</string>
-             </property>
-             <property name="text">
-              <string>Ping &amp;&amp; Version</string>
-             </property>
-            </widget>
            </item>
           </layout>
          </widget>
